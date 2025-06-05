@@ -1,6 +1,6 @@
 package tubes.launch;
 
-import java.sql.Connection; // Tetap ada jika konstruktor Map EmailService masih digunakan
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.Duration;
@@ -10,7 +10,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import javafx.application.Application;
-import javafx.scene.Scene; // Import User
+import javafx.scene.Scene;
 import javafx.stage.Stage;
 import tubes.backend.DatabaseManager;
 import tubes.backend.EmailService;
@@ -29,19 +29,16 @@ public class mainApp extends Application {
     private Stage stage;
     private Scene scene;
 
-    // Backend Services
     public static PengelolaTugas pengelolaTugas;
     public static Notifikasi notifikasiService;
     public static EmailService emailService;
 
     private ScheduledExecutorService scheduler;
 
-    // --- KONFIGURASI SMTP ---
-    // GANTI DENGAN DETAIL SERVER SMTP ANDA
     private static final String SMTP_HOST = "smtp.gmail.com";
     private static final String SMTP_PORT = "587";
-    private static final String SMTP_USERNAME = "amannotifikasi@gmail.com"; // GANTI INI
-    private static final String SMTP_PASSWORD = "klac pxfp mkne govf"; // GANTI INI
+    private static final String SMTP_USERNAME = "amannotifikasi@gmail.com";
+    private static final String SMTP_PASSWORD = "klac pxfp mkne govf";
     private static final boolean SMTP_AUTH = true;
     private static final boolean SMTP_STARTTLS = true;
     private static final boolean SMTP_SSL_ENABLE = false;
@@ -55,13 +52,13 @@ public class mainApp extends Application {
         inisialisasiDatabase();
 
         emailService = new EmailService(
-            SMTP_HOST,
-            SMTP_PORT,
-            SMTP_USERNAME,
-            SMTP_PASSWORD,
-            SMTP_AUTH,
-            SMTP_STARTTLS,
-            SMTP_SSL_ENABLE
+                SMTP_HOST,
+                SMTP_PORT,
+                SMTP_USERNAME,
+                SMTP_PASSWORD,
+                SMTP_AUTH,
+                SMTP_STARTTLS,
+                SMTP_SSL_ENABLE
         );
         notifikasiService = new Notifikasi(emailService);
 
@@ -138,17 +135,16 @@ public class mainApp extends Application {
         long delay;
         if (waktuPengingat == null) {
             System.err.println("Waktu pengingat tidak valid (null) untuk tugas: " + tugas.getJudul());
-            return; // Waktu pengingat tidak boleh null
+            return; 
         }
 
         if (waktuPengingat.isBefore(LocalDateTime.now())) {
             System.out.println("Waktu pengingat untuk tugas '" + tugas.getJudul() + "' (" + waktuPengingat + ") sudah lewat. Mengirim segera.");
-            delay = 0; // Kirim segera
+            delay = 0; 
         } else {
             delay = Duration.between(LocalDateTime.now(), waktuPengingat).toMillis();
         }
 
-        // Pastikan delay tidak negatif jika ada sedikit perbedaan waktu karena eksekusi kode
         if (delay < 0) {
             delay = 0;
         }
@@ -158,10 +154,6 @@ public class mainApp extends Application {
             boolean terkirim = notifikasiService.kirimPengingat(tugas, user);
             if (terkirim) {
                 System.out.println("Scheduler: Pengingat untuk '" + tugas.getJudul() + "' berhasil dikirim ke " + user.getEmail());
-                // TODO OPSIONAL: Update status 'pengingat_dikirim = 1' di database untuk tugas ini
-                // if (pengelolaTugas != null) {
-                //    pengelolaTugas.tandaiPengingatTerkirim(tugas.getId());
-                // }
             } else {
                 System.err.println("Scheduler: Gagal mengirim pengingat untuk '" + tugas.getJudul() + "' ke " + user.getEmail());
             }

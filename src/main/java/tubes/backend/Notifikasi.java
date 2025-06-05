@@ -86,7 +86,7 @@ public class Notifikasi {
                     -->
                 </div>
                 <div class="footer">
-                    <p>&copy; %d Aplikasi AMAN. Semua hak cipta dilindungi.</p>
+                    <p></p>
                 </div>
             </div>
         </body>
