@@ -116,7 +116,7 @@ public class SchedulePage extends StackPane {
         persegiBackground.setStyle(
                 "-fx-background-color: #FFFFFF;" +
                 "-fx-opacity: 0.30;" +
-                "-fx-background-radius: 30 30 0 0;"
+                "-fx-background-radius: 50 50 0 0;"
         );
         midSectionStack.getChildren().addAll(persegiBackground, scrollPane);
 
