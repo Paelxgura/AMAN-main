@@ -12,10 +12,10 @@ public class Tugas {
     private LocalDateTime tanggalBatas;
     private String kategori;
     private String lokasi;
-    private String mataKuliah;
-    private boolean selesai;
+    private String status;
 
-    public Tugas(int id, int userId, String judul, String deskripsi, LocalDateTime tanggalBatas, String kategori, String lokasi, String mataKuliah, boolean selesai) {
+    // Konstruktor untuk mengambil data dari DB
+    public Tugas(int id, int userId, String judul, String deskripsi, LocalDateTime tanggalBatas, String kategori, String lokasi, String status) {
         this.id = id;
         this.userId = userId;
         this.judul = judul;
@@ -23,24 +23,22 @@ public class Tugas {
         this.tanggalBatas = tanggalBatas;
         this.kategori = kategori;
         this.lokasi = lokasi;
-        this.mataKuliah = mataKuliah;
-        this.selesai = selesai;
+        this.status = status;
     }
 
-
-    public Tugas(int userId, String judul, String deskripsi, LocalDateTime tanggalBatas, String kategori, String lokasi, String mataKuliah) {
+    // Konstruktor untuk membuat tugas baru dari UI
+    public Tugas(int userId, String judul, String deskripsi, LocalDateTime tanggalBatas, String kategori, String lokasi) {
         this.userId = userId;
         this.judul = judul;
         this.deskripsi = deskripsi;
         this.tanggalBatas = tanggalBatas;
         this.kategori = kategori;
         this.lokasi = lokasi;
-        this.mataKuliah = mataKuliah;
-        this.selesai = false;
+        this.status = "Belum Dimulai";
     }
 
 
-    // GETTERS
+    // --- GETTERS ---
     public int getId() { return id; }
     public int getUserId() { return userId; }
     public String getJudul() { return judul; }
@@ -48,10 +46,9 @@ public class Tugas {
     public LocalDateTime getTanggalBatas() { return tanggalBatas; }
     public String getKategori() { return kategori; }
     public String getLokasi() { return lokasi; }
-    public String getMataKuliah() { return mataKuliah; }
-    public boolean isSelesai() { return selesai; }
+    public String getStatus() { return status; }
 
-    // SETTERS
+    // --- SETTERS ---
     public void setId(int id) { this.id = id; }
     public void setUserId(int userId) { this.userId = userId; }
     public void setJudul(String judul) { this.judul = judul; }
@@ -59,12 +56,11 @@ public class Tugas {
     public void setTanggalBatas(LocalDateTime tanggalBatas) { this.tanggalBatas = tanggalBatas; }
     public void setKategori(String kategori) { this.kategori = kategori; }
     public void setLokasi(String lokasi) { this.lokasi = lokasi; }
-    public void setMataKuliah(String mataKuliah) { this.mataKuliah = mataKuliah; }
-    public void setSelesai(boolean selesai) { this.selesai = selesai; }
+    public void setStatus(String status) { this.status = status; }
 
     public String getTanggalBatasFormatted() {
         if (tanggalBatas == null) return "N/A";
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm E, dd MMM yy"); // Format yy untuk tahun 2 digit
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm E, dd MMM yy");
         return tanggalBatas.format(formatter);
     }
 
@@ -74,7 +70,7 @@ public class Tugas {
                 deskripsi == null ? "-" : deskripsi,
                 getTanggalBatasFormatted(),
                 kategori == null ? "-" : kategori,
-                selesai ? "Selesai" : "Belum Selesai");
+                status);
     }
 
     @Override
@@ -83,7 +79,7 @@ public class Tugas {
                 "id=" + id +
                 ", userId=" + userId +
                 ", judul='" + judul + '\'' +
-                ", selesai=" + selesai +
+                ", status='" + status + '\'' +
                 '}';
     }
 
