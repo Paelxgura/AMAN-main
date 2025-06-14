@@ -58,11 +58,13 @@ public class EditSchedule extends StackPane {
         topLblWrapper.setPadding(new Insets(10, 0, 10, 0));
 
         Rectangle persegi = new Rectangle();
+        persegi.setWidth(800);
+        persegi.setHeight(800);
         persegi.setStyle(
                 "-fx-fill: #FFFFFF;" +
                         "-fx-opacity: 0.35;" +
-                        "-fx-arc-width: 25;" +
-                        "-fx-arc-height: 25;"
+                        "-fx-arc-width: 100;" +
+                        "-fx-arc-height: 100;"
         );
 
         Label namaKegiatanLbl = new Label("NAMA KEGIATAN");
@@ -93,9 +95,10 @@ public class EditSchedule extends StackPane {
                 "-fx-text-fill: rgb(193, 214, 200, 1);" +
                 "-fx-font-size: 15px;";
         double fieldPrefWidth = 600;
+        double fieldPrefHeight = 50;
 
         this.namaKegiatanField = new TextField();
-        this.namaKegiatanField.setPrefWidth(fieldPrefWidth);
+        this.namaKegiatanField.setPrefSize(fieldPrefWidth, fieldPrefHeight);
         this.namaKegiatanField.setMinWidth(Region.USE_PREF_SIZE);
         this.namaKegiatanField.setStyle(fieldStyle);
 
@@ -104,33 +107,34 @@ public class EditSchedule extends StackPane {
         kategoriItems.add("NON-AKADEMIK");
         this.kategoriCB = new ComboBox<>();
         this.kategoriCB.getItems().addAll(kategoriItems);
-        this.kategoriCB.setPrefWidth(fieldPrefWidth);
-        this.kategoriCB.setMinWidth(Region.USE_PREF_SIZE);
+        this.kategoriCB.setPrefSize(fieldPrefWidth, fieldPrefHeight);
+        this.kategoriCB.setMaxWidth(Double.MAX_VALUE);
         this.kategoriCB.setStyle(fieldStyle + "-fx-background-insets: 0;");
 
         this.tanggalDP = new DatePicker();
-        this.tanggalDP.setPrefWidth(fieldPrefWidth);
-        this.tanggalDP.setMinWidth(Region.USE_PREF_SIZE);
+        this.tanggalDP.setPrefSize(fieldPrefWidth, fieldPrefHeight);
+        this.tanggalDP.setMaxWidth(Double.MAX_VALUE);
         this.tanggalDP.setStyle(fieldStyle);
         this.tanggalDP.getEditor().setStyle("-fx-text-fill: rgb(193, 214, 200, 1);");
 
         this.waktuField = new TextField();
         this.waktuField.setPromptText("HH:mm (contoh: 14:30)");
-        this.waktuField.setPrefWidth(fieldPrefWidth);
+        this.waktuField.setPrefSize(fieldPrefWidth, fieldPrefHeight);
         this.waktuField.setMinWidth(Region.USE_PREF_SIZE);
         this.waktuField.setStyle(fieldStyle);
 
         this.lokasiField = new TextField();
-        this.lokasiField.setPrefWidth(fieldPrefWidth);
+        this.lokasiField.setPrefSize(fieldPrefWidth, fieldPrefHeight);
         this.lokasiField.setMinWidth(Region.USE_PREF_SIZE);
         this.lokasiField.setStyle(fieldStyle);
 
         this.deskripsiField = new TextField();
-        this.deskripsiField.setPrefWidth(fieldPrefWidth);
+        this.deskripsiField.setPrefSize(fieldPrefWidth, fieldPrefHeight);
         this.deskripsiField.setMinWidth(Region.USE_PREF_SIZE);
         this.deskripsiField.setStyle(fieldStyle);
 
         this.ingatkanSayaCheckBox = new CheckBox("Ingatkan saya");
+        this.ingatkanSayaCheckBox.setPrefHeight(fieldPrefHeight);
         this.ingatkanSayaCheckBox.setTextFill(Color.rgb(1, 47, 16, 1));
         this.ingatkanSayaCheckBox.setFont(Font.font("Segoe UI", 16));
 
@@ -168,10 +172,10 @@ public class EditSchedule extends StackPane {
         }
 
         GridPane inputGridPane = new GridPane();
-        inputGridPane.setHgap(20);
-        inputGridPane.setVgap(20);
+        inputGridPane.setHgap(50);
+        inputGridPane.setVgap(33);
         inputGridPane.setAlignment(Pos.CENTER);
-        inputGridPane.setPadding(new Insets(25, 50, 25, 50));
+        inputGridPane.setPadding(new Insets(30, 50, 25, 50));
 
         ColumnConstraints col0 = new ColumnConstraints();
         col0.setHalignment(HPos.LEFT);
@@ -201,12 +205,18 @@ public class EditSchedule extends StackPane {
                 "-fx-cursor: hand;" +
                 "-fx-font-weight: BOLD;" +
                 "-fx-background-radius: 30;";
+
         Button batalBtn = new Button("BATAL");
         batalBtn.setStyle(buttonStyle);
         batalBtn.setPrefSize(180, 35);
+        batalBtn.setTranslateX(-100);
+        batalBtn.setTranslateY(605);
+
         Button simpanBtn = new Button("SIMPAN");
         simpanBtn.setStyle(buttonStyle);
         simpanBtn.setPrefSize(180, 35);
+        simpanBtn.setTranslateX(100);
+        simpanBtn.setTranslateY(605);
 
         StackPane inputCard = new StackPane();
         persegi.widthProperty().bind(inputGridPane.widthProperty());
@@ -214,11 +224,7 @@ public class EditSchedule extends StackPane {
         inputCard.getChildren().addAll(persegi, inputGridPane);
         inputCard.setPadding(new Insets(20));
 
-        HBox tombolBox = new HBox(30, batalBtn, simpanBtn);
-        tombolBox.setAlignment(Pos.CENTER);
-        tombolBox.setPadding(new Insets(20, 0, 20, 0));
-
-        VBox formContentVBox = new VBox(15, inputCard, tombolBox);
+        StackPane formContentVBox = new StackPane(inputCard, batalBtn, simpanBtn);
         formContentVBox.setAlignment(Pos.TOP_CENTER);
         formContentVBox.setMaxWidth(Double.MAX_VALUE);
 
@@ -297,7 +303,6 @@ public class EditSchedule extends StackPane {
 
         String lokasiInput = (lokasi == null || lokasi.trim().isEmpty()) ? "Belum Diisi" : lokasi.trim();
         boolean sukses;
-        String mataKuliahInput = "";
         Tugas tugasHasil = null;
 
         Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -308,25 +313,24 @@ public class EditSchedule extends StackPane {
         Optional<ButtonType> result = confirmAlert.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.OK) {
             if (tugasToEdit == null) {
+                // PERBAIKAN: Hapus parameter mataKuliah dari pemanggilan buatTugas
                 tugasHasil = this.app.getPengelolaTugas().buatTugas(
                         namaKegiatan,
                         deskripsi,
                         tanggalBatasGabungan,
                         kategori,
-                        lokasiInput,
-                        mataKuliahInput
+                        lokasiInput
                 );
                 sukses = (tugasHasil != null);
             } else {
+                // PERBAIKAN: Hapus parameter mataKuliah dan isSelesai dari pemanggilan ubahTugas
                 sukses = this.app.getPengelolaTugas().ubahTugas(
                         tugasToEdit.getId(),
                         namaKegiatan,
                         deskripsi,
                         tanggalBatasGabungan,
                         kategori,
-                        lokasiInput,
-                        mataKuliahInput,
-                        tugasToEdit.isSelesai()
+                        lokasiInput
                 );
                 if(sukses) tugasHasil = app.getPengelolaTugas().getTugasById(tugasToEdit.getId());
             }
