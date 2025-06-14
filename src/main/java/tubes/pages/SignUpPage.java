@@ -2,6 +2,7 @@ package tubes.pages;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -16,6 +17,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
+
 
 import tubes.launch.mainApp;
 
@@ -178,7 +180,38 @@ public class SignUpPage extends StackPane {
         });
 
         signUpBtn.setOnAction(e -> {
-            app.switchSceneSchedulePage();
+            System.out.println("[SignUpPage] Tombol Sign Up ditekan.");
+
+            String username = unameField.getText();
+            String email = emailField.getText();
+            String password = pwField.getText();
+
+            if (username.isEmpty() || email.isEmpty() || password.isEmpty()) {
+                Alert alert = new Alert(Alert.AlertType.WARNING);
+                alert.setTitle("Input Tidak Lengkap");
+                alert.setHeaderText(null);
+                alert.setContentText("Mohon isi semua kolom untuk mendaftar.");
+                alert.showAndWait();
+                return;
+            }
+
+            tubes.backend.User userBaru = app.getPengelolaTugas().daftarAkun(username, email, password);
+
+            if (userBaru != null) {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Pendaftaran Berhasil");
+                alert.setHeaderText(null);
+                alert.setContentText("Akun Anda telah berhasil dibuat. Silakan login.");
+                alert.showAndWait();
+                app.switchSceneLogInPage();
+            } else {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Pendaftaran Gagal");
+                alert.setHeaderText(null);
+                alert.setContentText("Pendaftaran gagal. Username atau email mungkin sudah digunakan.");
+                alert.showAndWait();
+            }
+
         });
 
     }
